@@ -15,5 +15,9 @@ Deno.serve(async (req) => {
       body:JSON.stringify({message:{token,notification:{title:"بشير شوب PRO",body:"لديك طلب جديد في المتجر"},android:{priority:"high",notification:{channel_id:"shop_orders"}}}})
     });
     return Response.json({success:result.ok},{status:result.ok?200:502});
-  } catch { return new Response("Notification failed",{status:500}); }
+} catch (error) {
+  console.error("Notification error:", error instanceof Error ? error.name : "Unknown error");
+  return new Response("Notification failed", { status: 500 });
+}
+                                
 });

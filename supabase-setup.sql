@@ -1,0 +1,25 @@
+begin;
+create table public.shop_admins (user_id uuid primary key references auth.users(id) on delete cascade);
+alter table public.shop_admins enable row level security;
+revoke all on public.shop_admins from anon, authenticated;
+create function public.is_shop_admin() returns boolean language sql stable security definer set search_path = '' as $$ select exists(select 1 from public.shop_admins where user_id=auth.uid()) $$;
+revoke all on function public.is_shop_admin() from public;
+grant execute on function public.is_shop_admin() to authenticated;
+create table public.products (id uuid primary key default gen_random_uuid(), name text not null, brand text not null default '', size text not null default '', category text not null, audience text not null default 'الكل', price numeric(12,3) not null check(price>0), photo text not null, available boolean not null default true, created_at timestamptz not null default now());
+alter table public.products enable row level security;
+create policy "public catalog" on public.products for select to anon, authenticated using (true);
+create policy "admin products" on public.products for all to authenticated using (public.is_shop_admin()) with check (public.is_shop_admin());
+grant select on public.products to anon,authenticated;
+grant insert,update,delete on public.products to authenticated;
+create table public.orders (id uuid primary key default gen_random_uuid(), customer_name text not null, phone text not null, address text not null, product_ids uuid[] not null, status text not null default 'pending', created_at timestamptz not null default now());
+alter table public.orders enable row level security;
+revoke all on public.orders from anon,authenticated;
+grant select,update on public.orders to authenticated;
+create policy "admin read orders" on public.orders for select to authenticated using(public.is_shop_admin());
+create policy "admin update orders" on public.orders for update to authenticated using(public.is_shop_admin()) with check(public.is_shop_admin());
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) values ('product-photos','product-photos',true,5242880,array['image/jpeg','image/png','image/webp']);
+create policy "admin upload photos" on storage.objects for insert to authenticated with check(bucket_id='product-photos' and public.is_shop_admin());
+create policy "admin update photos" on storage.objects for update to authenticated using(bucket_id='product-photos' and public.is_shop_admin()) with check(bucket_id='product-photos' and public.is_shop_admin());
+create policy "admin delete photos" on storage.objects for delete to authenticated using(bucket_id='product-photos' and public.is_shop_admin());
+commit;
+-- Orders remain closed to public submissions until a validated checkout endpoint is installed.

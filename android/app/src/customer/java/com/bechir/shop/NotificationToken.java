@@ -1,0 +1,1 @@
+package com.bechir.shop; final class NotificationToken { static void copy(android.app.Activity a){} }

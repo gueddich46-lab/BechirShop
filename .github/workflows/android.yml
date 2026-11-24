@@ -19,6 +19,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - run: |
+          mkdir -p android/app/src/main/assets
+          cp banner-shop.png banner-pro.png android/app/src/main/assets/
       - run: gradle -p android assembleCustomerDebug assembleAdminDebug
       - run: |
           cp android/app/build/outputs/apk/customer/debug/*.apk BECHIR-SHOP.apk

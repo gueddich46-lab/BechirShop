@@ -5,3 +5,4 @@ android { namespace 'com.bechir.shop'; compileSdk 35
  productFlavors { customer { dimension 'role'; resValue 'string','app_name','بشير شوب'; buildConfigField 'String','START_PAGE','"index.html"' }; admin { dimension 'role'; applicationIdSuffix '.pro'; resValue 'string','app_name','بشير شوب PRO'; buildConfigField 'String','START_PAGE','"admin.html"' } }
  buildFeatures { buildConfig true }
 }
+ dependencies { adminImplementation 'com.google.firebase:firebase-messaging:24.1.2' }

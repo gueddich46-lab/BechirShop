@@ -18,7 +18,7 @@ return oid;
 end $$;
 revoke all on function public.place_shop_order(text,text,text,text,uuid[]) from public;
 grant execute on function public.place_shop_order(text,text,text,text,uuid[]) to anon,authenticated;
-create or replace function public.shop_release_reservation() returns trigger language plpgsql security definer set search_path='' as $
+create or replace function public.shop_release_reservation() returns trigger language plpgsql security definer set search_path='' as $reservation$
 begin
 if TG_OP='DELETE' then
 if old.status not in ('cancelled','delivered') then raise exception 'Cancel or deliver order before deleting'; end if;
@@ -29,7 +29,7 @@ if new.status='cancelled' then update public.products set reserved_order=null wh
 elsif new.status='delivered' then update public.products set available=false,reserved_order=null where reserved_order=old.id;
 end if;
 return new;
-end $;
+end $reservation$;
 drop trigger if exists shop_order_reservation on public.orders;
 create trigger shop_order_reservation before update of status or delete on public.orders for each row execute function public.shop_release_reservation();
 commit;

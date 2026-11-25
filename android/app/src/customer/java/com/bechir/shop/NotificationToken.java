@@ -1,1 +1,1 @@
-package com.bechir.shop; final class NotificationToken { static void copy(android.app.Activity a){} }
+package com.bechir.shop; final class NotificationToken { static void init(android.app.Activity a){}  static void copy(android.app.Activity a){} }

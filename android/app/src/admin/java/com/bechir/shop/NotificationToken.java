@@ -8,7 +8,7 @@ final class NotificationToken { static void init(android.app.Activity a){ com.on
  static void copy(Activity a){
  try { com.onesignal.OneSignal.getUser().getPushSubscription().optIn(); } catch(Exception ignored){}
  new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(()->{
- try { var sub=com.onesignal.OneSignal.getUser().getPushSubscription(); new android.app.AlertDialog.Builder(a).setTitle("OneSignal - تشخيص").setMessage("SDK: 5.1.31\nSubscription ID: "+(sub.getId()!=null?"OK":"Missing")+"\nFCM token: "+(sub.getToken()!=null?"OK":"Missing")+"\nOpted in: "+sub.getOptedIn()).setPositiveButton("OK",null).show(); }catch(Exception e){new android.app.AlertDialog.Builder(a).setMessage(e.getClass().getSimpleName()).setPositiveButton("OK",null).show();}
+ try { com.onesignal.user.subscriptions.IPushSubscription sub=com.onesignal.OneSignal.getUser().getPushSubscription(); new android.app.AlertDialog.Builder(a).setTitle("OneSignal - تشخيص").setMessage("SDK: 5.1.31\nSubscription ID: "+(sub.getId()!=null?"OK":"Missing")+"\nFCM token: "+(sub.getToken()!=null?"OK":"Missing")+"\nOpted in: "+sub.getOptedIn()).setPositiveButton("OK",null).show(); }catch(Exception e){new android.app.AlertDialog.Builder(a).setMessage(e.getClass().getSimpleName()).setPositiveButton("OK",null).show();}
  },3000);
  }
  static void copyLegacy(Activity a){
